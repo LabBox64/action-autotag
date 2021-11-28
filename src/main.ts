@@ -10,14 +10,20 @@ import semver, {ReleaseType} from 'semver'
 export declare type AnyResponse = OctokitResponse<any>
 export declare type TagSchema = components['schemas']['tag']
 
-const owner = github.context.payload.repository!!.owner.login
-const repo = github.context.payload.repository!!.name
+if (github.context.payload.repository?.owner.login === undefined) {
+  throw Error("Repository owner can't be null")
+}
+if (github.context.payload.repository?.name === undefined) {
+  throw Error("Repository name can't be null")
+}
+
+const owner = github.context.payload.repository.owner.login
+const repo = github.context.payload.repository.name
 
 async function checkTag(
   octokit: Octokit & Api & {paginate: PaginateInterface},
   tagName: any
 ): Promise<boolean> {
-  octokit
   const {data} = await octokit.rest.repos.listTags({
     owner,
     repo

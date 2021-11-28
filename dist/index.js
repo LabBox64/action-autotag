@@ -18,15 +18,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __importDefault(__nccwpck_require__(2186));
 const github_1 = __importDefault(__nccwpck_require__(5438));
 const semver_1 = __importDefault(__nccwpck_require__(1383));
+if (((_a = github_1.default.context.payload.repository) === null || _a === void 0 ? void 0 : _a.owner.login) === undefined) {
+    throw Error("Repository owner can't be null");
+}
+if (((_b = github_1.default.context.payload.repository) === null || _b === void 0 ? void 0 : _b.name) === undefined) {
+    throw Error("Repository name can't be null");
+}
 const owner = github_1.default.context.payload.repository.owner.login;
 const repo = github_1.default.context.payload.repository.name;
 function checkTag(octokit, tagName) {
     return __awaiter(this, void 0, void 0, function* () {
-        octokit;
         const { data } = yield octokit.rest.repos.listTags({
             owner,
             repo
