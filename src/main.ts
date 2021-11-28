@@ -1,11 +1,11 @@
-import core from '@actions/core'
-import github from '@actions/github'
+import * as core from '@actions/core'
+import * as github from '@actions/github'
 import {Octokit} from '@octokit/core'
-import {PaginateInterface} from '@octokit/plugin-paginate-rest'
-import {Api} from '@octokit/plugin-rest-endpoint-methods/dist-types/types'
 import {OctokitResponse} from '@octokit/types'
 import {components} from '@octokit/openapi-types'
 import semver, {ReleaseType} from 'semver'
+import {PaginateInterface} from '@octokit/plugin-paginate-rest'
+import {Api} from '@octokit/plugin-rest-endpoint-methods/dist-types/types'
 
 export declare type AnyResponse = OctokitResponse<any>
 export declare type TagSchema = components['schemas']['tag']
