@@ -6,6 +6,25 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20,17 +39,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __importDefault(__nccwpck_require__(2186));
-const github_1 = __importDefault(__nccwpck_require__(5438));
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
 const semver_1 = __importDefault(__nccwpck_require__(1383));
-if (((_a = github_1.default.context.payload.repository) === null || _a === void 0 ? void 0 : _a.owner.login) === undefined) {
+if (((_a = github.context.payload.repository) === null || _a === void 0 ? void 0 : _a.owner.login) === undefined) {
     throw Error("Repository owner can't be null");
 }
-if (((_b = github_1.default.context.payload.repository) === null || _b === void 0 ? void 0 : _b.name) === undefined) {
+if (((_b = github.context.payload.repository) === null || _b === void 0 ? void 0 : _b.name) === undefined) {
     throw Error("Repository name can't be null");
 }
-const owner = github_1.default.context.payload.repository.owner.login;
-const repo = github_1.default.context.payload.repository.name;
+const owner = github.context.payload.repository.owner.login;
+const repo = github.context.payload.repository.name;
 function checkTag(octokit, tagName) {
     return __awaiter(this, void 0, void 0, function* () {
         const { data } = yield octokit.rest.repos.listTags({
@@ -127,7 +146,7 @@ function checkMessages(octokit, branchHeadSha, tagSha, issueTags) {
                 const id = matcher.exec(message);
                 if (id && Number(id[1]) > 0) {
                     const issue_number = Number(id[1]);
-                    core_1.default.info(`check issue ${issue_number} for minor labels`);
+                    core.info(`check issue ${issue_number} for minor labels`);
                     const { data } = yield octokit.rest.issues.get({
                         owner,
                         repo,
@@ -139,7 +158,7 @@ function checkMessages(octokit, branchHeadSha, tagSha, issueTags) {
                             if (typeof label === 'object') {
                                 const name = label.name || 'empty';
                                 if (issueTags.includes(name)) {
-                                    core_1.default.info('found enhancement issue');
+                                    core.info('found enhancement issue');
                                     releaseBump = 'minor';
                                     break;
                                 }
@@ -165,33 +184,33 @@ function isReleaseBranch(branchName, branchList) {
 }
 function action() {
     return __awaiter(this, void 0, void 0, function* () {
-        core_1.default.info(`run for ${owner} / ${repo}`);
+        core.info(`run for ${owner} / ${repo}`);
         // core.info(`payload ${JSON.stringify(github.context.payload.repository, undefined, 2)}`);
         // prepare octokit
-        const token = core_1.default.getInput('github-token', { required: true });
-        const octokit = github_1.default.getOctokit(token);
+        const token = core.getInput('github-token', { required: true });
+        const octokit = github.getOctokit(token);
         // load inputs
         // const customTag     = core.getInput('custom-tag');
-        const dryRun = core_1.default.getInput('dry-run').toLowerCase();
-        const level = core_1.default.getInput('bump');
-        const forceBranch = core_1.default.getInput('branch');
-        const releaseBranch = core_1.default.getInput('release-branch');
-        const withV = core_1.default.getInput('with-v').toLowerCase() === 'false' ? '' : 'v';
-        const customTag = core_1.default.getInput('tag');
-        const issueLabels = core_1.default.getInput('issue-labels');
+        const dryRun = core.getInput('dry-run').toLowerCase();
+        const level = core.getInput('bump');
+        const forceBranch = core.getInput('branch');
+        const releaseBranch = core.getInput('release-branch');
+        const withV = core.getInput('with-v').toLowerCase() === 'false' ? '' : 'v';
+        const customTag = core.getInput('tag');
+        const issueLabels = core.getInput('issue-labels');
         let branchInfo;
         let nextVersion;
         if (forceBranch) {
-            core_1.default.info(`check forced branch ${forceBranch}`);
+            core.info(`check forced branch ${forceBranch}`);
             branchInfo = yield loadBranch(octokit, forceBranch);
             if (!branchInfo) {
                 throw new Error('unknown branch provided');
             }
-            core_1.default.info('branch confirmed, continue');
+            core.info('branch confirmed, continue');
         }
         if (!branchInfo) {
-            const activeBranch = github_1.default.context.ref.replace(/refs\/heads\//, '');
-            core_1.default.info(`load the history of activity-branch ${activeBranch} from context ref ${github_1.default.context.ref}`);
+            const activeBranch = github.context.ref.replace(/refs\/heads\//, '');
+            core.info(`load the history of activity-branch ${activeBranch} from context ref ${github.context.ref}`);
             branchInfo = yield loadBranch(octokit, activeBranch);
             if (!branchInfo) {
                 throw new Error(`failed to load branch ${activeBranch}`);
@@ -200,30 +219,30 @@ function action() {
         // the sha for tagging
         const sha = branchInfo.object.sha;
         const branchName = branchInfo.ref.split('/').pop();
-        core_1.default.info(`active branch name is ${branchName}`);
+        core.info(`active branch name is ${branchName}`);
         if (customTag) {
             const checkTagResult = yield checkTag(octokit, customTag);
             if (checkTagResult) {
                 throw new Error(`tag already exists ${customTag}`);
             }
-            core_1.default.setOutput('new-tag', customTag);
+            core.setOutput('new-tag', customTag);
         }
         else {
-            core_1.default.info(`maching refs: ${sha}`);
+            core.info(`maching refs: ${sha}`);
             const latestTag = yield getLatestTag(octokit);
             const latestMainTag = yield getLatestTag(octokit, false);
-            core_1.default.info(`the previous tag of the repository ${JSON.stringify(latestTag, undefined, 2)}`);
-            core_1.default.info(`the previous main tag of the repository ${JSON.stringify(latestMainTag, undefined, 2)}`);
+            core.info(`the previous tag of the repository ${JSON.stringify(latestTag, undefined, 2)}`);
+            core.info(`the previous main tag of the repository ${JSON.stringify(latestMainTag, undefined, 2)}`);
             const versionTag = latestTag ? latestTag.name : '0.0.0';
-            core_1.default.setOutput('tag', versionTag);
+            core.setOutput('tag', versionTag);
             if (latestTag && latestTag.commit.sha === sha) {
                 throw new Error('no new commits, avoid tagging');
             }
-            core_1.default.info(`The repo tags: ${JSON.stringify(latestTag, undefined, 2)}`);
+            core.info(`The repo tags: ${JSON.stringify(latestTag, undefined, 2)}`);
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const version = semver_1.default.clean(versionTag);
             nextVersion = semver_1.default.inc(version, 'prerelease', branchName);
-            core_1.default.info(`default to prerelease version ${nextVersion}`);
+            core.info(`default to prerelease version ${nextVersion}`);
             let issLabs = ['enhancement'];
             if (issueLabels) {
                 const xlabels = issueLabels.split(',').map(lab => lab.trim());
@@ -232,30 +251,30 @@ function action() {
                 }
             }
             // check if commits and issues point to a diffent release
-            core_1.default.info('commits in branch');
+            core.info('commits in branch');
             const msgLevel = yield checkMessages(octokit, branchInfo.object.sha, latestMainTag.commit.sha, issLabs);
             // core.info(`commit messages suggest ${msgLevel} upgrade`);
             if (isReleaseBranch(branchName, releaseBranch)) {
-                core_1.default.info(`${branchName} is a release branch`);
+                core.info(`${branchName} is a release branch`);
                 if (msgLevel === 'none') {
                     const releaseType = level;
                     nextVersion = semver_1.default.inc(version, releaseType);
                 }
                 else {
-                    core_1.default.info(`commit messages force bump level to ${msgLevel}`);
+                    core.info(`commit messages force bump level to ${msgLevel}`);
                     const releaseType = msgLevel;
                     nextVersion = semver_1.default.inc(version, releaseType);
                 }
             }
-            core_1.default.info(`bump tag ${nextVersion}`);
-            core_1.default.setOutput('new-tag', nextVersion);
+            core.info(`bump tag ${nextVersion}`);
+            core.setOutput('new-tag', nextVersion);
         }
         if (dryRun === 'true') {
-            core_1.default.info("dry run, don't perform tagging");
+            core.info("dry run, don't perform tagging");
             return;
         }
         const newTag = `${withV}${nextVersion}`;
-        core_1.default.info(`really add tag ${customTag ? customTag : newTag}`);
+        core.info(`really add tag ${customTag ? customTag : newTag}`);
         const ref = `refs/tags/${customTag ? customTag : newTag}`;
         yield octokit.rest.git.createRef({
             owner,
@@ -267,9 +286,9 @@ function action() {
 }
 action()
     // eslint-disable-next-line github/no-then
-    .then(() => core_1.default.info('success'))
+    .then(() => core.info('success'))
     // eslint-disable-next-line github/no-then
-    .catch(error => core_1.default.setFailed(error.message));
+    .catch(error => core.setFailed(error.message));
 
 
 /***/ }),
